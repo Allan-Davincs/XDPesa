@@ -9,7 +9,9 @@ public class LoanApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long laonId;
+    private String customerName;
     private double amount;
+    private String purpose;
     private double interestRate;
     private int durationMonths;
     private String status;
@@ -38,12 +40,28 @@ public void calculateInterest(double riskFactor){
             this.laonId = laonId;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
     public double getAmount() {
         return amount;
     }
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
     }
 
     public double getInterestRate() {

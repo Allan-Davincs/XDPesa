@@ -9,7 +9,7 @@ import java.util.List; // WEKA HUU!
 
 
 @RestController
-@RequestMapping("api/logins")
+@RequestMapping("/api/loan")
 @CrossOrigin(origins = "*")
 public class LoanController {
 @Autowired
@@ -52,7 +52,7 @@ public class LoanController {
     }
     //5.DELETE Kufuta Ombi la Mkopo
 
-    @DeleteMapping("/delete{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteLoan(@PathVariable Long id){
         if (loanRepository.existsById(id)){
             loanRepository.deleteById(id);
