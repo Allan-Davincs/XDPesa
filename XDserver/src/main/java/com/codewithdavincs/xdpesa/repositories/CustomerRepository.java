@@ -9,8 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    // Spring itatengeneza SQL ya kutafuta mteja kwa namba ya simu kiotomatiki!
-    static Optional<Customer> findByPhoneNumber(String phoneNumber) {
-        return null;
-    }
+    // Spring will implement this query method automatically based on naming convention
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
 }
