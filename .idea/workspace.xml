@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="68fc0c4e-00a4-4a95-881c-015194389638" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/XDUser/xdpesa-frontend/src/lib/storage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/XDUser/xdpesa-frontend/src/lib/storage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/XDserver/src/main/java/com/codewithdavincs/xdpesa/controllers/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/XDserver/src/main/java/com/codewithdavincs/xdpesa/controllers/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/XDserver/src/main/java/com/codewithdavincs/xdpesa/models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/XDserver/src/main/java/com/codewithdavincs/xdpesa/models/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/XDserver/src/main/java/com/codewithdavincs/xdpesa/repositories/CustomerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/XDserver/src/main/java/com/codewithdavincs/xdpesa/repositories/CustomerRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    // Spring will implement this query method automatically based on naming convention
     Optional<Customer> findByPhoneNumber(String phoneNumber);
+    Optional<Customer> findByEmail(String email);
 }

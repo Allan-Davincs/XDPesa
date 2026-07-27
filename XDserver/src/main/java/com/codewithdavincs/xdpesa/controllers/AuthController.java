@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -13,23 +15,40 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class AuthController {
     @Autowired
-
     private CustomerRepository customerRepository;
+
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody Customer customer) {
-        if (customerRepository.findByPhoneNumber(customer.getPhoneNumber()).isPresent()) {
-            return ResponseEntity.badRequest().body("Namba ya Simu tayari imeshasajiliwa");
+    public ResponseEntity<Map<String, Object>> register(@RequestBody Customer customer) {
+        if (customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Email tayari imeshasajiliwa"));
         }
-        customerRepository.save(customer);
-        return ResponseEntity.ok("Usajili wa " + customer.getFullName() + " umefanikiwa kikamilifu");
+        if (customerRepository.findByPhoneNumber(customer.getPhoneNumber()).isPresent()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Namba ya simu tayari imeshasajiliwa"));
+        }
+        Customer savedCustomer = customerRepository.save(customer);
+        Map<String, Object> user = new HashMap<>();
+        user.put("id", savedCustomer.getId());
+        user.put("fullName", savedCustomer.getFullName());
+        user.put("email", savedCustomer.getEmail());
+        user.put("phoneNumber", savedCustomer.getPhoneNumber());
+        user.put("role", "USER");
+
+        return ResponseEntity.ok(Map.of("message", "Usajili umefanikiwa.", "user", user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> Login(@RequestBody Customer loginDetails) {
-        Optional<Customer> user = customerRepository.findByPhoneNumber(loginDetails.getPhoneNumber());
+    public ResponseEntity<Map<String, Object>> Login(@RequestBody Customer loginDetails) {
+        Optional<Customer> user = customerRepository.findByEmail(loginDetails.getEmail());
         if (user.isPresent() && user.get().getPassword().equals(loginDetails.getPassword())) {
-            return ResponseEntity.ok("Login imefanikiwa, karibu ! " + user.get().getFullName());
+            Customer savedCustomer = user.get();
+            Map<String, Object> userPayload = new HashMap<>();
+            userPayload.put("id", savedCustomer.getId());
+            userPayload.put("fullName", savedCustomer.getFullName());
+            userPayload.put("email", savedCustomer.getEmail());
+            userPayload.put("phoneNumber", savedCustomer.getPhoneNumber());
+            userPayload.put("role", "USER");
+            return ResponseEntity.ok(Map.of("message", "Login imefanikiwa.", "user", userPayload));
         }
-        return ResponseEntity.status(401).body("Namba ya simu au password si sahihi");
+        return ResponseEntity.status(401).body(Map.of("message", "Email au password si sahihi"));
     }
 }

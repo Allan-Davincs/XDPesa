@@ -1,3 +1,4 @@
+import api from "../api/axiosInstance";
 import type { RequestItem, User, UserRole } from "../types";
 
 const USERS_KEY = "xdpesa_users";
@@ -105,69 +106,53 @@ export function loadUsers(): User[] {
   return getStoredUsers().map(({ password, ...user }) => user);
 }
 
-export function registerUser(
+export async function registerUser(
   fullName: string,
   email: string,
   phoneNumber: string,
   password: string,
   role: UserRole = "USER"
-): { success: boolean; message: string; user?: User } {
-  const users = getStoredUsers();
-  const emailExists = users.some((record) => record.email.toLowerCase() === email.toLowerCase());
-  const phoneExists = users.some((record) => record.phoneNumber === phoneNumber);
+): Promise<{ success: boolean; message: string; user?: User }> {
+  try {
+    const response = await api.post("auth/register", {
+      fullName,
+      email,
+      phoneNumber,
+      password,
+    });
 
-  if (emailExists) {
-    return { success: false, message: "Email is already registered." };
+    const user = response.data.user as User;
+    setCurrentUser(user);
+    return { success: true, message: response.data.message, user };
+  } catch (error: any) {
+    if (error.response?.data?.message) {
+      return { success: false, message: error.response.data.message };
+    }
+    return { success: false, message: "Registration failed. Please try again." };
   }
-
-  if (phoneExists) {
-    return { success: false, message: "Phone number is already registered." };
-  }
-
-  const user: StoredUser = {
-    id: crypto.randomUUID(),
-    fullName,
-    email,
-    phoneNumber,
-    password,
-    role,
-  };
-  const nextUsers = [...users, user];
-  saveStoredUsers(nextUsers);
-  const safeUser: User = { id: user.id, fullName, email, phoneNumber, role };
-  setCurrentUser(safeUser);
-  return { success: true, message: "Registration successful.", user: safeUser };
 }
 
-export function loginUser(
+export async function loginUser(
   email: string,
   password: string,
   remember = false
-): { success: boolean; message: string; user?: User } {
-  const users = getStoredUsers();
-  const user = users.find(
-    (record) => record.email.toLowerCase() === email.toLowerCase() && record.password === password,
-  );
+): Promise<{ success: boolean; message: string; user?: User }> {
+  try {
+    const response = await api.post("auth/login", { email, password });
+    const user = response.data.user as User;
 
-  if (!user) {
-    return { success: false, message: "Invalid email or password." };
+    setCurrentUser(user);
+    if (!remember) {
+      window.sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+    }
+
+    return { success: true, message: response.data.message, user };
+  } catch (error: any) {
+    if (error.response?.data?.message) {
+      return { success: false, message: error.response.data.message };
+    }
+    return { success: false, message: "Login failed. Please try again." };
   }
-
-  const safeUser: User = {
-    id: user.id,
-    fullName: user.fullName,
-    email: user.email,
-    phoneNumber: user.phoneNumber,
-    role: user.role,
-  };
-
-  setCurrentUser(safeUser);
-
-  if (!remember) {
-    window.sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(safeUser));
-  }
-
-  return { success: true, message: "Login successful.", user: safeUser };
 }
 
 export function logoutUser() {
