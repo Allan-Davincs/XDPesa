@@ -16,22 +16,20 @@ public class AuthController {
 
     private CustomerRepository customerRepository;
     @PostMapping("/register")
-    public ResponseEntity<String>register(@RequestBody Customer customer){
-        if (CustomerRepository.findByPhoneNumber(customer.getPhoneNumber()).isPresent()){
-            return ResponseEntity.badRequest().body("Namba ya Simu tayr imeshasajiliwa");
+    public ResponseEntity<String> register(@RequestBody Customer customer) {
+        if (customerRepository.findByPhoneNumber(customer.getPhoneNumber()).isPresent()) {
+            return ResponseEntity.badRequest().body("Namba ya Simu tayari imeshasajiliwa");
         }
         customerRepository.save(customer);
-        return ResponseEntity.ok("usajili wa " + customer.getFullName() + "Umefanikiwa Kikamilifu");
+        return ResponseEntity.ok("Usajili wa " + customer.getFullName() + " umefanikiwa kikamilifu");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String>Login(@RequestBody Customer loginDetails){
-        Optional<Customer> user = CustomerRepository.findByPhoneNumber(loginDetails.getPhoneNumber());
+    public ResponseEntity<String> Login(@RequestBody Customer loginDetails) {
+        Optional<Customer> user = customerRepository.findByPhoneNumber(loginDetails.getPhoneNumber());
         if (user.isPresent() && user.get().getPassword().equals(loginDetails.getPassword())) {
-
-            return ResponseEntity.ok("Login Imefanikiwa  Karibu !" + user.get().getFullName());
-
+            return ResponseEntity.ok("Login imefanikiwa, karibu ! " + user.get().getFullName());
         }
-        return ResponseEntity.status(401).body("Namba ya Simu au Password Si  Sahihi");
+        return ResponseEntity.status(401).body("Namba ya simu au password si sahihi");
     }
 }
