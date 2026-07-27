@@ -3,7 +3,7 @@ import StatusBadge from "../components/StatusBadge";
 
 interface AdminRequestsPageProps {
   requests: RequestItem[];
-  onUpdateStatus: (id: string, status: RequestItem["status"]) => void;
+  onUpdateStatus: (id: string, status: RequestItem["status"]) => Promise<void>;
 }
 
 export default function AdminRequestsPage({ requests, onUpdateStatus }: AdminRequestsPageProps) {

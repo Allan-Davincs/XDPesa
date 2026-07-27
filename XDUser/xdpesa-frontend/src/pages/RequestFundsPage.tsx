@@ -4,7 +4,7 @@ import type { RequestItem, User } from "../types";
 
 interface RequestFundsPageProps {
   currentUser: User;
-  onCreateRequest: (request: Omit<RequestItem, "id" | "date" | "status">) => void;
+  onCreateRequest: (request: Omit<RequestItem, "id" | "date" | "status">) => Promise<void>;
 }
 
 export default function RequestFundsPage({ currentUser, onCreateRequest }: RequestFundsPageProps) {
@@ -26,21 +26,25 @@ export default function RequestFundsPage({ currentUser, onCreateRequest }: Reque
     }
 
     setLoading(true);
-    await new Promise((resolve) => window.setTimeout(resolve, 600));
-    onCreateRequest({
-      userId: currentUser.id,
-      userName: currentUser.fullName,
-      userEmail: currentUser.email,
-      amount,
-      purpose,
-      description,
-    });
-    setLoading(false);
-    setSuccess(true);
-    setAmount(0);
-    setPurpose("");
-    setDescription("");
-    setFeedback("Your request was submitted successfully and is now pending review.");
+    try {
+      await onCreateRequest({
+        userId: currentUser.id,
+        userName: currentUser.fullName,
+        userEmail: currentUser.email,
+        amount,
+        purpose,
+        description,
+      });
+      setSuccess(true);
+      setAmount(0);
+      setPurpose("");
+      setDescription("");
+      setFeedback("Your request was submitted successfully and is now pending review.");
+    } catch (err) {
+      setFeedback("Failed to submit request. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

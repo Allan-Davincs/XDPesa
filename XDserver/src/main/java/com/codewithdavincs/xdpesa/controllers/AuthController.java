@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,5 +51,20 @@ public class AuthController {
             return ResponseEntity.ok(Map.of("message", "Login imefanikiwa.", "user", userPayload));
         }
         return ResponseEntity.status(401).body(Map.of("message", "Email au password si sahihi"));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers() {
+        List<Customer> customers = customerRepository.findAll();
+        List<Map<String, Object>> users = customers.stream().map(customer -> {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("id", customer.getId());
+            userMap.put("fullName", customer.getFullName());
+            userMap.put("email", customer.getEmail());
+            userMap.put("phoneNumber", customer.getPhoneNumber());
+            userMap.put("role", "USER");
+            return userMap;
+        }).toList();
+        return ResponseEntity.ok(users);
     }
 }

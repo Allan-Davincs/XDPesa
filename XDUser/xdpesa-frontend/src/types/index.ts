@@ -1,9 +1,8 @@
-export interface LoanApplication {
-  id?: number;
-  customerName: string;
-  amount: number;
-  purpose: string;
-  status?: "PENDING" | "APPROVED" | "REJECTED";
+export interface CustomerInfo {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber?: string;
 }
 
 export type UserRole = "ADMIN" | "USER";
@@ -34,4 +33,23 @@ export interface AuthFormData {
   phoneNumber: string;
   password: string;
   confirmPassword: string;
+}
+
+export interface ApiResponse<T> {
+  message?: string;
+  user?: T;
+  loan?: T;
+  data?: T;
+}
+
+/** Matches the backend LoanApplication JSON shape exactly */
+export interface LoanApiResponse {
+  laonId?: number;
+  customerName: string;
+  amount: number;
+  purpose: string;
+  interestRate?: number;
+  durationMonths?: number;
+  status?: string;
+  customer?: CustomerInfo | null;
 }

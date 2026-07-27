@@ -4,11 +4,11 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 import type { User } from "../types";
 
 interface LoginPageProps {
-  onLogin: (email: string, password: string, remember: boolean) => {
+  onLogin: (email: string, password: string, remember: boolean) => Promise<{
     success: boolean;
     message: string;
     user?: User;
-  };
+  }>;
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
@@ -19,7 +19,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email.trim() || !password) {
@@ -27,7 +27,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       return;
     }
 
-    const result = onLogin(email, password, remember);
+    const result = await onLogin(email, password, remember);
 
     if (!result.success) {
       setError(result.message);

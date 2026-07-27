@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
@@ -16,6 +16,7 @@ import {
   createRequest,
   getCurrentUser,
   loadRequests,
+  loadRequestsByUser,
   loadUsers,
   loginUser,
   logoutUser,
@@ -30,31 +31,66 @@ function App() {
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
 
-  useEffect(() => {
-    setCurrentUser(getCurrentUser());
-    setRequests(loadRequests());
-    setTotalUsers(loadUsers().length);
+  const fetchData = useCallback(async () => {
+    const user = getCurrentUser();
+    setCurrentUser(user);
+
+    if (user) {
+      if (user.role === "ADMIN") {
+        const allRequests = await loadRequests();
+        setRequests(allRequests);
+        const allUsers = await loadUsers();
+        setTotalUsers(allUsers.length);
+      } else {
+        const userRequests = await loadRequestsByUser(user.id);
+        setRequests(userRequests);
+      }
+    }
   }, []);
 
-  const handleRegister = (data: AuthFormData) =>
-    registerUser(data.fullName, data.email, data.phoneNumber, data.password);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const handleLogin = (email: string, password: string, remember: boolean) =>
-    loginUser(email, password, remember);
+  const handleRegister = async (data: AuthFormData) => {
+    const result = await registerUser(data.fullName, data.email, data.phoneNumber, data.password);
+    if (result.success && result.user) {
+      setCurrentUser(result.user);
+    }
+    return result;
+  };
+
+  const handleLogin = async (email: string, password: string, remember: boolean) => {
+    const result = await loginUser(email, password, remember);
+    if (result.success && result.user) {
+      setCurrentUser(result.user);
+    }
+    return result;
+  };
 
   const handleLogout = () => {
     logoutUser();
     setCurrentUser(null);
+    setRequests([]);
+    setTotalUsers(0);
   };
 
-  const handleCreateRequest = (request: Omit<RequestItem, "id" | "date" | "status">) => {
-    const nextRequest = createRequest(request);
-    setRequests((prev) => [nextRequest, ...prev]);
+  const handleCreateRequest = async (request: Omit<RequestItem, "id" | "date" | "status">) => {
+    try {
+      const newRequest = await createRequest(request);
+      setRequests((prev) => [newRequest, ...prev]);
+    } catch (error) {
+      console.error("Failed to create request", error);
+    }
   };
 
-  const handleUpdateStatus = (id: string, status: RequestItem["status"]) => {
-    const nextRequests = updateRequestStatus(id, status);
-    setRequests(nextRequests);
+  const handleUpdateStatus = async (id: string, status: RequestItem["status"]) => {
+    try {
+      const nextRequests = await updateRequestStatus(id, status);
+      setRequests(nextRequests);
+    } catch (error) {
+      console.error("Failed to update status", error);
+    }
   };
 
   return (

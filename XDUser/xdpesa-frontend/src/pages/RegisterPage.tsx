@@ -4,7 +4,7 @@ import { Eye, EyeOff, ShieldCheck } from "lucide-react";
 import type { AuthFormData, User } from "../types";
 
 interface RegisterPageProps {
-  onRegister: (data: AuthFormData) => { success: boolean; message: string; user?: User };
+  onRegister: (data: AuthFormData) => Promise<{ success: boolean; message: string; user?: User }>;
 }
 
 export default function RegisterPage({ onRegister }: RegisterPageProps) {
@@ -25,7 +25,7 @@ export default function RegisterPage({ onRegister }: RegisterPageProps) {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!form.fullName.trim() || !form.email.trim() || !form.phoneNumber.trim() || !form.password || !form.confirmPassword) {
       setStatus("error");
@@ -51,7 +51,7 @@ export default function RegisterPage({ onRegister }: RegisterPageProps) {
       return;
     }
 
-    const result = onRegister(form);
+    const result = await onRegister(form);
     if (!result.success) {
       setStatus("error");
       setFeedback(result.message);
