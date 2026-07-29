@@ -4,23 +4,32 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+// Inaashiria kuwa hii class ni Entity inayowakilisha table kwenye database
 @Entity
-@Table(name ="transactions")
+// Inaweka jina la table kwenye database kuwa "transactions"
+@Table(name = "transactions")
 public class Transaction {
+
+    // Inaweka hii field kuwa Primary Key ya table
     @Id
+    // Inafanya ID iongezeke moja kwa moja kwa kila muamala mpya (Auto Increment)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long transactionId;
 
-    private  Long transactionId;
+    // Kiasi cha fedha kilichohusika kwenye muamala
     private double amount;
+
+    // Tarehe na muda sahihi muamala ulipofanyika
     private LocalDateTime timestamp;
-    private String Status;
 
+    // Hali ya muamala (k.mf. SUCCESS, PENDING, au FAILED)
+    private String status;
+
+    // Uhusiano wa Wengi-kwa-Mmoja: Miamala mingi inaweza kuhusishwa na ombi moja la mkopo (LoanApplication)
     @ManyToOne
-
     private LoanApplication loan;
 
-    //Stters and Getters For Transcations
-
+    // --- GETTERS NA SETTERS ZA TRANSACTION ---
 
     public Long getTransactionId() {
         return transactionId;
@@ -47,11 +56,11 @@ public class Transaction {
     }
 
     public String getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(String status) {
-        Status = status;
+        this.status = status;
     }
 
     public LoanApplication getLoan() {
@@ -61,5 +70,4 @@ public class Transaction {
     public void setLoan(LoanApplication loan) {
         this.loan = loan;
     }
-
 }
