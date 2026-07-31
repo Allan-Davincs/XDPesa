@@ -2,42 +2,57 @@ package com.codewithdavincs.xdpesa.models;
 
 import jakarta.persistence.*;
 
+// Inaifanya hii class kuwa Entity inayowakilisha table kwenye database
 @Entity
-@Table(name ="loans")
+// Inaweka jina la table kwenye database kuwa "loans"
+@Table(name = "loans")
 public class LoanApplication {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
 
+    // Inaweka hii field kuwa Primary Key ya table
+    @Id
+    // Inafanya ID iongezeke moja kwa moja kwa kila record mpya (Auto Increment)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long laonId;
+
     private String customerName;
     private double amount;
     private String purpose;
     private double interestRate;
     private int durationMonths;
+
+    // Hali ya mkopo: PENDING (Inasubiri), APPROVED (Imekubaliwa), au REJECTED (Imekataliwa)
     private String status;
 
-    //PENDING  APROVED  REJECETED
-
+    // Uhusiano wa Wengi-kwa-Mmoja: Mikopo mingi inaweza kumilikiwa na Mteja mmoja (Customer)
     @ManyToOne
-    @JoinColumn(name ="customer_id")
+    // Inaweka Foreign Key column kwenye database yenye jina "customer_id"
+    @JoinColumn(name = "customer_id")
     private Customer customer;
-    //method Overloading (polymorphism)
 
-    public void calculateInterest(){
-    this.interestRate = 0.15;
-}
-public void calculateInterest(double riskFactor){
-    this.interestRate = 0.15 * (riskFactor*0.05); // Risky adjusted interest
-}
+    // --- DHANNO YA METHOD OVERLOADING (POLYMORPHISM) ---
 
-//getters and setters Loan Application
+    /**
+     * Njia ya 1: Inakokotoa na kuweka Riba ya Msingi (15%)
+     */
+    public void calculateInterest() {
+        this.interestRate = 0.15;
+    }
 
-    public Long getLaonId(){
-            return laonId;
+    /**
+     * Njia ya 2: Inakokotoa riba kulingana na kiwango cha hatari (Risk Factor) cha mteja
+     */
+    public void calculateInterest(double riskFactor) {
+        this.interestRate = 0.15 * (riskFactor * 0.05); // Riba iliyorekebishwa kwa hatari
+    }
+
+    // --- GETTERS NA SETTERS ZA LOAN APPLICATION ---
+
+    public Long getLaonId() {
+        return laonId;
     }
 
     public void setLaonId(Long laonId) {
-            this.laonId = laonId;
+        this.laonId = laonId;
     }
 
     public String getCustomerName() {
@@ -73,7 +88,7 @@ public void calculateInterest(double riskFactor){
     }
 
     public int getDurationMonths() {
-            return durationMonths;
+        return durationMonths;
     }
 
     public void setDurationMonths(int durationMonths) {
@@ -88,12 +103,11 @@ public void calculateInterest(double riskFactor){
         this.status = status;
     }
 
-    public Customer getCustomer(){
-      return  customer;
+    public Customer getCustomer() {
+        return customer;
     }
 
     public void setCustomer(Customer customer) {
-    this.customer = customer;
-}
-
+        this.customer = customer;
+    }
 }
